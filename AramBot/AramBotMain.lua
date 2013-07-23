@@ -123,14 +123,18 @@ function arrangePrioritys()
 end
 
 function nextAction()
-				--if CountEnemyHeroInRange(1000) > CountAllyHeroInRange(1000) then
+	if state() == "full" or state() =="med"
+		return "attackPlayer"
+	else 
+		return "follow"
+		--if CountEnemyHeroInRange(1000) > CountAllyHeroInRange(1000) then
 	-- equal fights
-	if CountEnemyHeroInRange(800) == CountAllyHeroInRange(700)+1 and state() == "full" then 
+	--[[if CountEnemyHeroInRange(800) == CountAllyHeroInRange(700)-1 and state() == "full" then 
 		return "attackPlayer" 
-	elseif CountEnemyHeroInRange(800) == CountAllyHeroInRange(700)+1 and state() == "med" then 
+	elseif CountEnemyHeroInRange(800) == CountAllyHeroInRange(700)-1 and state() == "med" then 
 		return "attackLowHp" 
-	elseif CountEnemyHeroInRange(800) == CountAllyHeroInRange(700)+1 and state() == "full" then 
-		return "follow" 
+	elseif CountEnemyHeroInRange(800) == CountAllyHeroInRange(700) and state() == "full" then 
+		return "attackPlayer" 
 	-- more team
 	elseif CountEnemyHeroInRange(1000) == CountAllyHeroInRange(700) and state() =="full" or state() =="med" then 
 		return "attackPlayer" 
@@ -153,7 +157,7 @@ function nextAction()
 		end
 	else 
 		return "follow"
-	end
+	end]]--
 	
 end
 
