@@ -1,1 +1,1 @@
-return {'threshqinternal', }
+return {'threshqinternal', 'UdyrSpiritBearAttack', 'UdyrSpiritPhoenixAttack', 'udyrtigerattackult', }

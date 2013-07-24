@@ -646,7 +646,166 @@ if GetGame().map.name == "Howling Abyss" then
 			function OnCreateObj(object)
 			   if objectIsValid(object) then table.insert(myObjectsTable, object) end
 			end
-			 
+-------------------------------------------------------------------------------------
+	elseif GetMyHero().charName == "Darius" then
+			--champ by Λnonymous	
+		local drawQrange = true        -- Draw the range of Q
+		local useExecutioner = true     -- calculate Executioner or not? True / False
+		local havocPoints = 3           -- how many points in Havoc? 0 / 1 / 2 / 3
+		local drawUltiInfo = true
+		local smoothMultR = 1.0
+		local smoothStaticR = -2
+		local smoothStaticPerLvl = true
+		local smoothDisabledBeforeLvl = 12
+		local targetFindRange = 80        -- This is a distance between targeted spell coordinates and your real target's coordinates.
+		local qBladeRange = 270
+		local qRange = 425
+		local eRange = 500 -- lowered since most of the times enemies goes out of the E range while you're casting it
+		local rRange = 475
+		local wDmgRatioPerLvl = 0.2
+		local rDmgRatioPerHemo = 0.2
+		local hemoTimeOut = 5000
+		local enemyToAttack = nil
+		local enemyTable = {}
+		local hemoTable = {
+			[1] = "darius_hemo_counter_01.troy",
+			[2] = "darius_hemo_counter_02.troy",
+			[3] = "darius_hemo_counter_03.troy",
+			[4] = "darius_hemo_counter_04.troy",
+			[5] = "darius_hemo_counter_05.troy",
+		}
+		local damageTable = {
+			Q = { base = 35, baseScale = 35, adRatio = 0.7, },
+			R = { base = 70, baseScale = 90, adRatio = 0.75, },
+		}
+		local checkBuffForUlti = {
+			{name="Tryndamere", spellName="undyingRage", enabled=false, spellType=0, spellLevel=1, duration=5000, spellParticle="undyingrage_glow"},
+			{name="Kayle", spellName="eyeForEye", enabled=false, spellType=0, spellLevel=1, duration=3000, spellParticle="eyeforaneye"},
+			{name="Zilean", spellName="nickOfTime", enabled=false, spellType=0, spellLevel=1, duration=7000, spellParticle="nickoftime_tar"},
+			{name="Nocturne", spellName="shroudOfDarkness", enabled=false, spellType=0, spellLevel=1,duration=1500,spellParticle="nocturne_shroudofdarkness_shield_cas_02"},
+			{name="Blitzcrank", spellName="manaBarrier", enabled=false, spellType=1, spellLevel=1, duration=10000, spellParticle="manabarrier"},
+			{name="Sivir", spellName="spellShield", enabled=false, spellType=0, spellLevel=1, duration=3000, spellParticle="spellblock_eff"}
+		}
+		for i=0, heroManager.iCount, 1 do
+			local playerObj = heroManager:GetHero(i)
+			if playerObj and playerObj.team ~= player.team then
+				playerObj.hemo = { tick = 0, count = 0, }
+				playerObj.pauseTickQ = 0
+				playerObj.pauseTickR = 0
+				playerObj.canBeUlted = true
+				playerObj.immuneTimeout = 0
+				playerObj.shield = 0
+				table.insert(enemyTable,playerObj)
+				for i=1, #checkBuffForUlti, 1 do
+					if checkBuffForUlti[i].name == playerObj.charName then
+						checkBuffForUlti[i].enabled = true
+						PrintChat(checkBuffForUlti[i].spellName.." check enabled")
+					end
+				end
+			end
+		end
+
+		function OnCreateObj(obj)
+			if obj then
+				if string.find(string.lower(obj.name),"darius_hemo_counter") then
+					for i, enemy in pairs(enemyTable) do
+						if enemy and not enemy.dead and enemy.visible and GetDistance2D(enemy,obj) <= targetFindRange then
+							for k, hemo in pairs(hemoTable) do
+								if obj.name == hemo then 
+									enemy.hemo.tick = GetTickCount()
+									enemy.hemo.count = k
+									--PrintFloatText(enemy,21,k .. " Bleedings")
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+
+		function ChampionInfo(champion)
+			local results = {}
+			for i=1, #checkBuffForUlti, 1 do
+				if checkBuffForUlti[i].name == champion or checkBuffForUlti[i].name == "*" then
+					table.insert(results, checkBuffForUlti[i])
+				end
+			end
+			return results
+		end
+
+		function CanUltiEnemy(target)
+			for i, enemy in pairs(enemyTable) do
+				if target.networkID == enemy.networkID then
+					if enemy.canBeUlted == false and enemy.immuneTimeout < GetTickCount() then
+						enemy.canBeUlted = true
+						enemy.immuneTimeout = 0
+					end
+					return enemy.canBeUlted
+				end
+			end
+		end
+
+		function GetShieldValue(enemy,spellName)
+			if spellName == "manaBarrier" then
+				return enemy.mana*0.5
+			end
+		end
+
+		function GetDuration(spellName,spellLevel)
+			if spellName == "undyingRage" then return 5000 end
+			if spellName == "eyeForEye" then return 1500+500*spellLevel end
+			if spellName == "nickOfTime" then return 7000 end
+			if spellName == "shroudOfDarkness" then return 1500 end
+		end
+
+		function OnTick()
+			local rDmg = (damageTable.R.base + (damageTable.R.baseScale*player:GetSpellData(_R).level) +
+					damageTable.R.adRatio*player.addDamage) * smoothMultR
+			if player.level > smoothDisabledBeforeLvl then
+				local rDmgInc = smoothStaticR
+				if smoothStaticPerLvl == true then
+					rDmgInc = rDmgInc * player.level
+				end
+				rDmg = rDmg + rDmgInc
+			end
+			local qDmg = damageTable.Q.base + (damageTable.Q.baseScale*player:GetSpellData(_Q).level) +
+					damageTable.Q.adRatio*player.addDamage
+			for i, enemy in pairs(enemyTable) do
+				local enemyHP = enemy.health + enemy.shield
+				if (GetTickCount() - enemy.hemo.tick > hemoTimeOut) or (enemy and enemy.dead) then enemy.hemo.count = 0 end
+				if enemy and not enemy.dead and enemy.visible == true and enemy.bTargetable then
+					WReady = (myHero:CanUseSpell(_W) == READY and GetDistance(enemy) < 200)
+					if WReady then CastSpell(_W) end
+					local scale = 1 + havocPoints*0.005
+					if useExecutioner and enemyHP < enemy.maxHealth*0.4 then scale = scale + 0.06 end
+					qDmg = player:CalcDamage(enemy,qDmg)
+					if player:CanUseSpell(_Q) == READY and GetDistance(enemy) < qRange then CastSpell(_Q) end
+					if player:CanUseSpell(_E) == READY and GetDistance(enemy) < eRange then CastSpell(_E,enemy.x,enemy.z) end
+					--if player:CanUseSpell(_E) == READY and GetDistance(enemy) < eRange then CastSpell(_W) end
+					--if GetTickCount() - enemy.pauseTickQ >= 500 and GetTickCount() - enemy.pauseTickR >= 200 then
+						if qDmg * scale > enemyHP and player:CanUseSpell(_Q) == READY and GetDistance(enemy) < qRange then
+							CastSpell(_Q)
+							--enemy.pauseTickQ = GetTickCount()
+						elseif ( qDmg * 1.5 ) * scale > enemyHP and player:CanUseSpell(_Q) == READY and GetDistance(enemy) < qRange and GetDistance(enemy) >= qBladeRange then
+							CastSpell(_Q)
+							--enemy.pauseTickQ = GetTickCount()
+						elseif rDmg * ( 1.0 + rDmgRatioPerHemo * enemy.hemo.count ) > enemyHP and player:CanUseSpell(_R) == READY and GetDistance(enemy) < rRange and CanUltiEnemy(enemy) == true then
+							CastSpell(_R,enemy)
+							--enemy.pauseTickR = GetTickCount()
+						end
+							if player:GetSpellData(_R).level > 0 and player:GetDistance(enemy) < 3500 and drawUltiInfo == true then
+							if CanUltiEnemy(enemy) == false then
+								--PrintFloatText(enemy,0,"IMMUNE")
+							elseif rDmg * ( 1.0 + rDmgRatioPerHemo * enemy.hemo.count ) > enemyHP then
+								--PrintFloatText(enemy,0,"DUNK")
+							else
+								--PrintFloatText(enemy,0,"" .. math.ceil(enemyHP - (rDmg * ( 1.0 + rDmgRatioPerHemo * enemy.hemo.count ))) .. " hp" .. " - " .. enemy.hemo.count)
+							end
+						end
+					--end
+				end
+			end
+		end	
 -----------------------------------------------------------------------------------
 	elseif GetMyHero().charName == "MasterYi" then
 		--[[
@@ -2212,6 +2371,24 @@ if GetGame().map.name == "Howling Abyss" then
 					end
 			end
 		end
+-------------------------------------------------------------------------------------------------
+	elseif myHero.charName == "XinZhao" then
+			--champ by Λnonymous
+		local ts = TargetSelector(TARGET_LOW_HP,1000,false)
+		function OnTick()
+			ts:update()
+			if ts.target ~= nil and ts.target.dead == false and CountEnemyHeroInRange(1500) <= 3 then
+				QReady = (myHero:CanUseSpell(_Q) == READY and GetDistance(ts.target) < 200)
+				WReady = (myHero:CanUseSpell(_W) == READY and GetDistance(ts.target) < 200)
+				EReady = (myHero:CanUseSpell(_E) == READY and GetDistance(ts.target) < 600)
+				RReady = (myHero:CanUseSpell(_R) == READY and GetDistance(ts.target) < 185)
+				if EReady then CastSpell(_E, ts.target) end
+				if WReady then CastSpell(_W) end
+				if QReady then CastSpell(_Q) end
+				if RReady then CastSpell(_R) end
+			end
+		end
+		PrintChat("<font color='#E97FA5'>>> XINZHAO DETECTED! LOGIC V1.</font>")
 --------------------------------------------------------------------------------------------------		
 	else
 		local ts = TargetSelector(TARGET_LOW_HP,1000,false)

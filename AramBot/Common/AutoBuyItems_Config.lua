@@ -20,6 +20,6 @@ DebugMode = false
 
 ItemList1 = {}
 
-LastLevel = 8
+LastLevel = 10
 LastChamp = "none"
         
