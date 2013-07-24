@@ -1,0 +1,42 @@
+return {
+	["params"] = "95.172.70.92 5179 p4XOCWXuJa3z208kIdkILw== 33427328",
+	["nextUpdate"] = 0,
+	["myLane"] = "unknown",
+	["enemy"] = {
+		["bot"] = {
+		},
+		["mid"] = {
+		},
+		["jungle"] = {
+		},
+		["champions"] = {
+		},
+		["top"] = {
+		},
+		["unknown"] = {
+		},
+	},
+	["ally"] = {
+		["bot"] = {
+		},
+		["mid"] = {
+		},
+		["jungle"] = {
+		},
+		["champions"] = {
+			[1] = {
+				["bot"] = 0,
+				["mid"] = 0,
+				["jungle"] = 0,
+				["isJungler"] = false,
+				["top"] = 0,
+			},
+		},
+		["top"] = {
+		},
+		["unknown"] = {
+		},
+	},
+	["mapIndex"] = 12,
+	["tickUpdate"] = 0.25,
+}

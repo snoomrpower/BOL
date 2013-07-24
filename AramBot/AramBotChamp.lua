@@ -1,5 +1,654 @@
 if GetGame().map.name == "Howling Abyss" then
-	if GetMyHero().charName == "MasterYi"
+----------------------------------------------------------------------------
+	if GetMyHero().charName == "Aatrox" then
+		--[["Demon Reaper" Made by Pain]]--
+		--[[Credits]]--
+		--Burn (I stole his auto ignite code :))
+		--HunteR (His W Helper script)
+
+
+		local qp = TargetPredictionVIP(780, 1800, 0.25, 80) 
+		local qpe = TargetPredictionVIP(800, 1500, 0.25, 30)
+		local	LastCast = nil
+
+		local minPercents = 0.35
+		local maxPercents = 0.75
+		local delay, raz = 0
+
+		function OnLoad()
+
+		--levelSequence = {1,2,3,2,2,4,2,3,2,3,4,3,3,1,1,4,1,1}
+
+
+
+		if myHero:GetSpellData(SUMMONER_1).name:find("SummonerDot") then 
+			ignite = SUMMONER_1
+		elseif myHero:GetSpellData(SUMMONER_2).name:find("SummonerDot") then 
+			ignite = SUMMONER_2 
+		end
+		ts = TargetSelector(TARGET_NEAR_MOUSE, 1400, DAMAGE_PHYSICAL, false)
+		ts.name = "Aatrox"
+		AatroxConfig:addTS(ts)
+		raz = maxPercents - minPercents
+		end
+		
+		
+		function OnTick()
+		--autoLevelSetSequence(levelSequence)
+
+		ts:update()
+		if ValidTarget(ts.target) then
+			--[[Aatrox W, Damage or Life Steal]]--
+		if myHero.dead or myHero:CanUseSpell(_W) ~= READY or GetTickCount() < delay then
+						return
+		end
+			   
+		local percentLevel = (myHero.level - 1) / 17
+		local addedPerc = minPercents + (raz - (raz * percentLevel))
+	   
+		local nameSpell = myHero:GetSpellData(_W).name
+		if myHero:CanUseSpell(_W) == READY and ts.target ~= nil and GetDistance(ts.target) <= 550 then
+		if (myHero.health / myHero.maxHealth) < addedPerc then
+				if nameSpell == "aatroxw2" then
+						CastSpell(_W)
+				end
+		elseif nameSpell == "AatroxW" then
+				CastSpell(_W)
+		end
+				end
+						
+		--[[End of Aatrox W, Damage or Life Steal]]--
+
+			predictQ = qp:GetPrediction(ts.target)
+			predictE = qpe:GetPrediction(ts.target)
+			AutoUlti()
+			if not VIP_USER then
+				FreeCombo() 
+			elseif VIP_USER then
+				Combo()
+			end
+		end
+	end
+		function FreeCombo()
+			
+			if GetDistance(ts.target) <= 800 then
+				CastSpell(_E, ts.target.x, ts.target.z)
+			end
+				if GetDistance(ts.target) <= 800 then
+					CastSpell(_Q, ts.target.x, ts.target.z)
+				end
+		end
+
+		function Combo()
+			myHero:Attack(ts.target)
+			if predictE ~= nil and GetDistance(ts.target) <= 800 then
+				CastSpell(_E, predictE.x, predictE.z)
+			end
+					if predictQ ~= nil and GetDistance(ts.target) <= 800 then
+					CastSpell(_Q, predictQ.x, predictQ.z)
+				end
+			end
+
+
+
+		function AutoUlti()
+			if GetDistance(ts.target) <= 450 then
+				CastSpell(_R)
+			end
+		end
+
+
+		function AutoIgnite()
+				if string.find(sums[i], "SummonerDot") ~= nil then
+					local igniteDamage = 50 + 20 * player.level
+					if player:CanUseSpell(10+i) == READY then
+						for j = 1, heroManager.iCount do
+							local target = heroManager:GetHero(j)
+							if ts.target ~= nil and ts.target.visible == true and ts.target.team ~= player.team and ts.target.dead == false and player:GetDistance(ts.target) < 600 then
+								if target.health < igniteDamage then
+									CastSpell(10+i, ts.target)
+								end
+							end
+						end
+					end
+				end
+		end
+
+		function getMyTrueRange()
+			return myHero.range + GetDistance(myHero, myHero.minBBox)
+		end
+
+--------------------------------------------------------------------------------
+	elseif GetMyHero().charName == "Ahri" then
+		--[[    Ahri Helper by HeX 1.3.1 VIP Prediction
+		 
+		Hot Keys:
+				-Basic Combo: Space
+				-Harass(Toggle): Z
+		 
+		Features:
+				-Basic Combo: Items-> R-> E-> Q-> W-> R*2
+				-Harass: Q
+				-Use ulti in combo ON/OFF option in ingame menu.
+				-Use E in combo ON/OFF option in ingame menu.
+				-Mark killable target with a combo.
+				-Target configuration, Press shift to configure.
+				-Auto ignite and/or Ulti killable enemy ON/OFF option in ingame menu.
+				-Item Support: DFG, Hextech Gunblade, Bligewater Cutlass, Blade of the Ruined King.
+				-Basic orb walking ON/OFF option in ingame menu. It will follow your mouse so you can kite targets if you want.
+			   
+		Explanation of the marks:
+				-Green circle: Marks the current target to which you will do the combo
+				-Blue circle: Killed with a combo, if all the skills were available
+				-Red circle: Killed using Items + Q + W + E + R + Ignite(if available)
+				-2 Red circles: Killed using Items + Q + W + E + Ignite(if available)
+				-3 Red circles: Killed using Q + W     
+		]]--
+		 
+		--[[    Settings        ]]--
+		local rBuffer = 300 --Wont use R unless they are further than this.
+		--[[ Ranges     ]]--
+		local qRange = 800
+		local wRange = 800
+		local eRange = 975
+		local rRange = 1000
+		--[[    Damage Calculation      ]]--
+		local calculationenemy = 1
+		local killable = {}
+		--[[    Prediction      ]]--
+		if VIP_USER then
+				qp = TargetPredictionVIP(880, 1700, 0.25)
+				ep = TargetPredictionVIP(975, 1600, 0.1, 90)
+				PrintChat("Ahri Helper - VIP Prediction Used")
+		else
+				qp = TargetPrediction(880, 1.7, 250)
+				ep = TargetPrediction(975, 1.6, 100)
+				PrintChat("Ahri Helper - Basic Prediction Used")
+		end
+		--[[    Attacks ]]--
+		local lastBasicAttack = 0
+		local swing = 0
+		local startAttackSpeed = 0.625
+		local nextTick = 0
+		--[[    Items   ]]--
+		local ignite = nil
+		local QREADY, WREADY, EREADY, RREADY = false, false, false, false
+		local BRKSlot, DFGSlot, HXGSlot, BWCSlot = nil, nil, nil, nil
+		local BRKREADY, DFGREADY, HXGREADY, BWCREADY = false, false, false, false
+		 
+		function OnLoad()
+				ts = TargetSelector(TARGET_LOW_HP, wRange+100, DAMAGE_MAGIC)
+				ts.name = "Ahri"
+				AHConfig:addTS(ts)
+			   
+				lastBasicAttack = os.clock()
+				enemyMinions = minionManager(MINION_ENEMY, 1200, player)
+			   
+				if myHero:GetSpellData(SUMMONER_1).name:find("SummonerDot") then ignite = SUMMONER_1
+						elseif myHero:GetSpellData(SUMMONER_2).name:find("SummonerDot") then ignite = SUMMONER_2
+				end
+		end
+		 
+		function OnProcessSpell(unit, spell)
+				if unit.isMe and (spell.name:find("Attack") ~= nil) then
+						swing = 1
+						lastBasicAttack = os.clock()
+				end
+		end
+		 
+		function OnTick()
+				ts:update()
+				enemyMinions:update()
+				enemyMinions = minionManager(MINION_ENEMY, 1200, player)
+			   
+				AttackDelay = 1/(myHero.attackSpeed*startAttackSpeed)
+				if swing == 1 and os.clock() > lastBasicAttack + AttackDelay then
+						swing = 0
+				end
+		 
+				BRKSlot, DFGSlot, HXGSlot, BWCSlot = GetInventorySlotItem(3153), GetInventorySlotItem(3128), GetInventorySlotItem(3146), GetInventorySlotItem(3144)
+				DFGREADY = (DFGSlot ~= nil and myHero:CanUseSpell(DFGSlot) == READY)
+				HXGREADY = (HXGSlot ~= nil and myHero:CanUseSpell(HXGSlot) == READY)
+				BWCREADY = (BWCSlot ~= nil and myHero:CanUseSpell(BWCSlot) == READY)
+				BRKREADY = (BRKSlot ~= nil and myHero:CanUseSpell(BRKSlot) == READY)
+				IREADY = (ignite ~= nil and myHero:CanUseSpell(ignite) == READY)
+				QREADY = (myHero:CanUseSpell(_Q) == READY)
+				WREADY = (myHero:CanUseSpell(_W) == READY)
+				EREADY = (myHero:CanUseSpell(_E) == READY)
+				RREADY = (myHero:CanUseSpell(_R) == READY)
+		 
+				if ts.target ~= nil then
+						qPred = qp:GetPrediction(ts.target)
+						ePred = ep:GetPrediction(ts.target)
+				end
+				if tick == nil or GetTickCount()-tick>=100 then
+						tick = GetTickCount()
+						DmgCalculation()
+				end
+			   
+				--[[    Auto Ignite     ]]-- 
+						if IREADY then
+								local ignitedmg = 0    
+								for i = 1, heroManager.iCount, 1 do
+										local enemyhero = heroManager:getHero(i)
+										if ValidTarget(enemyhero,600) then
+												ignitedmg = 50 + 20 * myHero.level
+												if enemyhero.health <= ignitedmg then
+														CastSpell(ignite, enemyhero)
+												end
+										end
+								end
+						end
+		 
+				--[[    Harass  ]]--
+				if ts.target ~= nil then
+						if qPred ~= nil and GetDistance(ts.target) < qRange then
+								if VIP_USER and qp:GetHitChance(ts.target) > 0.5 then
+										CastSpell(_Q, qPred.x, qPred.z)
+								elseif not VIP_USER then
+										CastSpell(_Q, qPred.x, qPred.z)
+								end
+						end
+				end
+			   
+				--[[    Charm   ]]--
+						if EREADY and findClosestEnemy() ~= nil then
+								ePred2 = ep:GetPrediction(findClosestEnemy())
+								if ePRed2 and not ep:GetCollision(findClosestEnemy()) and GetDistance(ePred2) < eRange then
+										if VIP_USER and qp:GetHitChance(findClosestEnemy()) > 0.5 then
+												CastSpell(_E, ePred2.x, ePred2.z)
+										elseif not VIP_USER then
+												CastSpell(_E, ePred2.x, ePred2.z)
+										end
+								end
+						end
+			   
+				--[[    Combo   ]]--
+						--[[    Items   ]]--
+						if GetDistance(ts.target) < 600 then
+								if DFGREADY then CastSpell(DFGSlot, ts.target) end
+								if HXGREADY then CastSpell(HXGSlot, ts.target) end
+								if BWCREADY then CastSpell(BWCSlot, ts.target) end
+								if BRKREADY then CastSpell(BRKSlot, ts.target) end
+						end
+						--[[    Combo   ]]--
+						if RREADY and GetDistance(ts.target) > rBuffer and GetDistance(ts.target) < rRange then
+								CastSpell(_R, ts.target.x, ts.target.z)
+						end
+						if EREADY and ePred ~= nil and GetDistance(ts.target) < eRange then
+								if not ep:GetCollision(ts.target) then
+										if VIP_USER and qp:GetHitChance(ts.target) > 0.5 then
+												CastSpell(_E, ePred.x, ePred.z)
+										elseif not VIP_USER then
+												CastSpell(_E, ePred.x, ePred.z)
+										end
+								end
+						end
+						if QREADY and qPred ~= nil and GetDistance(ts.target) < qRange then
+								if VIP_USER and qp:GetHitChance(ts.target) > 0.5 then
+										CastSpell(_Q, qPred.x, qPred.z)
+								elseif not VIP_USER then
+										CastSpell(_Q, qPred.x, qPred.z)
+								end
+						end
+						if WREADY and GetDistance(ts.target) < wRange then
+								CastSpell(_W)
+						end
+						--[[    Attacks ]]--
+						if swing == 0 then
+								if GetDistance(ts.target) < (myHero.range+100) and GetTickCount() > nextTick and AHConfig.attacks then
+										myHero:Attack(ts.target)
+										nextTick = GetTickCount()
+								end
+								elseif swing == 1 then
+								if AHConfig.movement and GetTickCount() > (nextTick + 250) then
+										myHero:MoveTo(mousePos.x, mousePos.z)
+								end
+						end
+		end
+		 
+		--[[
+		Explanation of the marks:
+				-Green circle: Marks the current target to which you will do the combo
+				-Blue circle: Killed with a combo, if all the skills were available
+				-Red circle: Killed using Items + Q + W + E + R + Ignite(if available)
+				-2 Red circles: Killed using Items + Q + W + E + Ignite(if available)
+				-3 Red circles: Killed using Q + W     
+		]]
+		function DmgCalculation()
+				local enemy = heroManager:GetHero(calculationenemy)
+				if ValidTarget(enemy) then
+						local ignitedamage, dfgdamage, hxgdamage, bwcdamage, brkdamage = 0, 0, 0, 0, 0
+						local qdamage = getDmg("Q",enemy,myHero)
+						local wdamage = getDmg("W",enemy,myHero)
+						local edamage = getDmg("E",enemy,myHero)
+						local rdamage = getDmg("R",enemy,myHero,1)
+						local ignitedamage = (ignite and getDmg("IGNITE",enemy,myHero) or 0)
+						local dfgdamage = (DFGSlot and getDmg("DFG",enemy,myHero) or 0)
+						local hxgdamage = (HXGSlot and getDmg("HXG",enemy,myHero) or 0)
+						local bwcdamage = (BWCSlot and getDmg("BWC",enemy,myHero) or 0)
+						local brkdamage = (BRKSlot and getDmg("RUINEDKING",enemy,myHero) or 0)
+						local combo1 = qdamage + wdamage + edamage + rdamage
+						local combo2 = 0
+						local combo3 = 0
+						local combo4 = 0
+				if QREADY then
+						combo2 = combo2 + qdamage
+						combo3 = combo3 + qdamage
+						combo4 = combo4 + qdamage
+				end    
+				if WREADY then
+						combo2 = combo2 + wdamage
+						combo3 = combo3 + wdamage
+						combo4 = combo4 + wdamage
+				end
+				if EREADY then
+						combo2 = combo2 + edamage
+						combo3 = combo3 + edamage
+				end
+				if RREADY then
+						combo2 = combo2 + rdamage
+				end
+				if DFGREADY then
+						combo1 = combo1 + dfgdamage
+						combo2 = combo2 + dfgdamage
+						combo3 = combo3 + dfgdamage
+				end
+				if HXGREADY then
+						combo1 = combo1 + hxgdamage
+						combo2 = combo2 + hxgdamage
+						combo3 = combo3 + hxgdamage
+				end
+				if BWCREADY then
+						combo1 = combo1 + bwcdamage
+						combo2 = combo2 + bwcdamage
+						combo3 = combo3 + bwcdamage
+				end
+				if BRKREADY then
+						combo1 = combo1 + brkdamage
+						combo2 = combo2 + brkdamage
+						combo3 = combo3 + brkdamage
+				end
+				if IREADY then
+						combo1 = combo1 + ignitedamage
+						combo2 = combo2 + ignitedamage
+						combo3 = combo3 + ignitedamage
+				end
+				if combo4 >= enemy.health then killable[calculationenemy] = 4
+						elseif combo3 >= enemy.health then killable[calculationenemy] = 3
+						elseif combo2 >= enemy.health then killable[calculationenemy] = 2
+						elseif combo1 >= enemy.health then killable[calculationenemy] = 1
+						else killable[calculationenemy] = 0 end
+				end
+						if calculationenemy == 1 then calculationenemy = heroManager.iCount
+								else calculationenemy = calculationenemy-1
+						end
+		end
+		 
+		function findClosestEnemy()
+				local closestEnemy = nil
+				local currentEnemy = nil
+				for i=1, heroManager.iCount do
+						currentEnemy = heroManager:GetHero(i)
+						if currentEnemy.team ~= myHero.team and not currentEnemy.dead and currentEnemy.visible then
+								if closestEnemy == nil then
+										closestEnemy = currentEnemy
+										elseif GetDistance(currentEnemy) < GetDistance(closestEnemy) then
+												closestEnemy = currentEnemy
+								end
+						end
+				end
+		return closestEnemy
+		end
+		 
+		function minionCollision(predic, width, range)
+				for _, minionObjectE in pairs(enemyMinions.objects) do
+						if predic ~= nil and player:GetDistance(minionObjectE) < range then
+								ex = player.x
+								ez = player.z
+								tx = predic.x
+								tz = predic.z
+								dx = ex - tx
+								dz = ez - tz
+								if dx ~= 0 then
+										m = dz/dx
+										c = ez - m*ex
+								end
+								mx = minionObjectE.x
+								mz = minionObjectE.z
+								distanc = (math.abs(mz - m*mx - c))/(math.sqrt(m*m+1))
+								if distanc < width and math.sqrt((tx - ex)*(tx - ex) + (tz - ez)*(tz - ez)) > math.sqrt((tx - mx)*(tx - mx) + (tz - mz)*(tz - mz)) then
+										return true
+								end
+						end
+				end
+		return false
+		end
+----------------------------------------------------------------------------
+	elseif GetMyHero().charName == "Alistar" then
+		--[[
+			Alistar Combo v1.3 by eXtragoZ
+		  
+				It requires AllClass
+
+			-Full combo: W -> Q
+			-Marks the target
+			-Target configuration
+			-Press shift to configure
+		]]
+		--[[		Code		]]
+		local range = 600
+		-- Active
+		-- draw
+		-- ts
+		local ts
+		--
+
+		function OnLoad()
+			ts = TargetSelector(TARGET_LOW_HP,range,DAMAGE_MAGIC)
+			ts.name = "Alistar"
+			ACConfig:addTS(ts)
+		end
+
+		function OnTick()
+			ts:update()
+			if ts.target ~= nil and myHero:CanUseSpell(_Q) == READY and myHero:CanUseSpell(_W) == READY and GetDistance(ts.target)<=range then
+				CastSpell(_W,ts.target)
+				CastSpell(_Q)
+			end
+		end
+
+		function OnWndMsg(msg,key)
+			SC__OnWndMsg(msg,key)
+		end
+		function OnSendChat(msg)
+			TargetSelector__OnSendChat(msg)
+			ts:OnSendChat(msg, "pri")
+		end
+		PrintChat(" >> Alistar Combo 1.3 loaded!")
+------------------------------------------------------------------------------------
+	elseif GetMyHero().charName == "Evelynn" then
+			--[[
+					Evelynn Combo 1.6 by burn
+					updated season 3 items
+					Auto farm lag fixed and MEC requirement removed by HeX
+			 
+					-Full combo: Items -> R -> E -> Q
+					-Supports Deathfire Grasp, Bilgewater Cutlass, Hextech Gunblade, Sheen, Trinity, Lich Bane, Ignite, Iceborn, Liandrys and Blackfire
+					-Mark killable target with a combo
+					-Target configuration, Press shift to configure
+					-Option to auto ignite when enemy is killable (this affect also for damage calculation)
+					-MEC calculation for Ulti
+					-C toogle auto farm
+					-Harass with Q
+			 
+					Explanation of the marks:
+			 
+					Green circle: Marks the current target to which you will do the combo
+					Blue circle: Mark a target that can be killed with a combo, if all the skills were available
+					Red circle: Mark a target that can be killed using Items + 2 hit + R + E + Q x3 + ignite
+					2 Red circles: Mark a target that can be killed using Items + 1 hit + R + E + Q x2 + ignite
+					3 Red circles: Mark a target that can be killed using Items (without Sheen, Trinity and Lich Bane) + R + E + Q
+			]]
+			--[[            Code            ]]
+			local myObjectsTable = {}
+			local range = 600
+			local tick = nil
+			-- draw
+			local waittxt = {}
+			local calculationenemy = 1
+			local floattext = {"Skills are not available","Able to fight","Killable","Murder him!"}
+			local killable = {}
+			-- ts
+			local ts
+			--
+			local ignite = nil
+			local DFGSlot, HXGSlot, BWCSlot, SheenSlot, TrinitySlot, LichBaneSlot = nil, nil, nil, nil, nil, nil
+			local QREADY, EREADY, RREADY, DFGREADY, HXGREADY, BWCREADY, IREADY = false, false, false, false, false, false, false
+			 
+			function OnLoad()
+					ts = TargetSelector(TARGET_LOW_HP,range+50,DAMAGE_MAGIC)
+					ts.name = "Evelynn"
+					if myHero:GetSpellData(SUMMONER_1).name:find("SummonerDot") then ignite = SUMMONER_1
+					elseif myHero:GetSpellData(SUMMONER_2).name:find("SummonerDot") then ignite = SUMMONER_2 end
+					for i=1, heroManager.iCount do waittxt[i] = i*3 end
+				   
+					for i = 0, objManager.maxObjects, 1 do
+							local object = objManager:GetObject(i)
+							if objectIsValid(object) then table.insert(myObjectsTable, object) end
+					end
+			end
+			 
+			function objectIsValid(object)
+			   return object and object.valid and string.find(object.name,"Minion_") ~= nil and object.team ~= myHero.team and object.dead == false
+			end
+			 
+			function OnTick()
+					ts:update()
+					DFGSlot, HXGSlot, BWCSlot, SheenSlot, TrinitySlot, LichBaneSlot = GetInventorySlotItem(3128), GetInventorySlotItem(3146), GetInventorySlotItem(3144), GetInventorySlotItem(3057), GetInventorySlotItem(3078), GetInventorySlotItem(3100)
+					IcebornSlot, LiandrysSlot, BlackfireSlot = GetInventorySlotItem(3025), GetInventorySlotItem(3151), GetInventorySlotItem(3188)
+					QREADY = (myHero:CanUseSpell(_Q) == READY)
+					EREADY = (myHero:CanUseSpell(_E) == READY)
+					RREADY = (myHero:CanUseSpell(_R) == READY)
+					DFGREADY = (DFGSlot ~= nil and myHero:CanUseSpell(DFGSlot) == READY)
+					HXGREADY = (HXGSlot ~= nil and myHero:CanUseSpell(HXGSlot) == READY)
+					BWCREADY = (BWCSlot ~= nil and myHero:CanUseSpell(BWCSlot) == READY)
+					IREADY = (ignite ~= nil and myHero:CanUseSpell(ignite) == READY)
+					if tick == nil or GetTickCount()-tick > 150 then
+							tick = GetTickCount()
+							DmgCalculation()
+					end
+					if ts.target and myHero:GetDistance(ts.target) < 500 then
+							if QREADY then CastSpell(_Q, ts.target) end 
+					end
+					if ts.target then
+							if DFGREADY then CastSpell(DFGSlot, ts.target) end
+							if HXGREADY then CastSpell(HXGSlot, ts.target) end
+							if BWCREADY then CastSpell(BWCSlot, ts.target) end
+							if RREADY then CastSpell(_R, ts.target) end
+							if EREADY then CastSpell(_E, ts.target) end
+							if QREADY then CastSpell(_Q, ts.target) end
+					end
+							local myQ = math.floor((myHero:GetSpellData(_Q).level-1)*20 + 40 + myHero.ap * .4)
+									for i,object in ipairs(myObjectsTable) do
+											if objectIsValid(object) and object.health <= myHero:CalcDamage(object, myQ) and myHero:GetDistance(object) < 500 then
+															CastSpell(_Q, object)
+													else
+											end
+									end
+			   
+							if IREADY then
+									local ignitedmg = 0    
+									for j = 1, heroManager.iCount, 1 do
+											local enemyhero = heroManager:getHero(j)
+											if ValidTarget(enemyhero,600) then
+													ignitedmg = 50 + 20 * myHero.level
+													if enemyhero.health <= ignitedmg then
+															CastSpell(ignite, enemyhero)
+													end
+											end
+									end
+							end
+			end
+			 
+			function DmgCalculation()
+					local enemy = heroManager:GetHero(calculationenemy)
+					if ValidTarget(enemy) then
+							local dfgdamage, hxgdamage, bwcdamage, ignitedamage, Sheendamage, Trinitydamage, LichBanedamage  = 0, 0, 0, 0, 0, 0, 0
+							local qdamage = getDmg("Q",enemy,myHero)
+							local edamage = getDmg("E",enemy,myHero)
+							local rdamage = getDmg("R",enemy,myHero)
+							local hitdamage = getDmg("AD",enemy,myHero)
+							local dfgdamage = (DFGSlot and getDmg("DFG",enemy,myHero) or 0)
+							local hxgdamage = (HXGSlot and getDmg("HXG",enemy,myHero) or 0)
+							local bwcdamage = (BWCSlot and getDmg("BWC",enemy,myHero) or 0)
+							local ignitedamage = (ignite and getDmg("IGNITE",enemy,myHero) or 0)
+							local onhitdmg = (SheenSlot and getDmg("SHEEN",enemy,myHero) or 0)+(TrinitySlot and getDmg("TRINITY",enemy,myHero) or 0)+(LichBaneSlot and getDmg("LICHBANE",enemy,myHero) or 0)+(IcebornSlot and getDmg("ICEBORN",enemy,myHero) or 0)                                                
+							local onspelldamage = (LiandrysSlot and getDmg("LIANDRYS",enemy,myHero) or 0)+(BlackfireSlot and getDmg("BLACKFIRE",enemy,myHero) or 0)
+							local combo1 = qdamage*3 + edamage + rdamage + onspelldamage --0 cd
+							local combo2 = onspelldamage
+							local combo3 = onspelldamage
+							local combo4 = onspelldamage
+							if QREADY then
+									combo2 = combo2 + qdamage*3
+									combo3 = combo3 + qdamage*2
+									combo4 = combo4 + qdamage
+							end
+							if EREADY then
+									combo2 = combo2 + edamage
+									combo3 = combo3 + edamage
+									combo4 = combo4 + edamage
+							end
+							if RREADY then
+									combo2 = combo2 + rdamage
+									combo3 = combo3 + rdamage
+									combo4 = combo4 + rdamage
+							end            
+							if HXGREADY then              
+									combo1 = combo1 + hxgdamage    
+									combo2 = combo2 + hxgdamage
+									combo3 = combo3 + hxgdamage
+									combo4 = combo4 + hxgdamage
+							end
+							if BWCREADY then
+									combo1 = combo1 + bwcdamage
+									combo2 = combo2 + bwcdamage
+									combo3 = combo3 + bwcdamage
+									combo4 = combo4 + bwcdamage
+							end
+							if DFGREADY then        
+									combo1 = combo1*1.2 + dfgdamage            
+									combo2 = combo2*1.2 + dfgdamage
+									combo3 = combo3*1.2 + dfgdamage
+									combo4 = combo4*1.2 + dfgdamage
+							end
+							if IREADY and EvelynnConfig.autoignite then
+									combo1 = combo1 + ignitedamage
+									combo2 = combo2 + ignitedamage
+									combo3 = combo3 + ignitedamage
+							end
+							combo1 = combo1 + hitdamage*2 + onhitdmg    
+							combo2 = combo2 + hitdamage*2 + onhitdmg
+							combo3 = combo3 + hitdamage + onhitdmg        
+							if combo4 >= enemy.health then killable[calculationenemy] = 4
+							elseif combo3 >= enemy.health then killable[calculationenemy] = 3
+							elseif combo2 >= enemy.health then killable[calculationenemy] = 2
+							elseif combo1 >= enemy.health then killable[calculationenemy] = 1
+							else killable[calculationenemy] = 0 end
+					end
+					if calculationenemy == 1 then
+							calculationenemy = heroManager.iCount
+					else
+							calculationenemy = calculationenemy-1
+					end
+			end
+			 
+			function OnCreateObj(object)
+			   if objectIsValid(object) then table.insert(myObjectsTable, object) end
+			end
+			 
+-----------------------------------------------------------------------------------
+	elseif GetMyHero().charName == "MasterYi" then
 		--[[
 				Master Yi Combo 1.6 by burn
 				updated season 3
@@ -39,14 +688,6 @@ if GetGame().map.name == "Howling Abyss" then
 		local QREADY, EREADY, RREADY, DFGREADY, HXGREADY, BWCREADY, IREADY, YomumusGhostbladeReady = false, false, false, false, false, false, false, false
 		 
 		function OnLoad()
-				PrintChat(">> MasterYi Combo 1.6 loaded!")
-				MYiConfig = scriptConfig("Master Yi Combo", "yicombo")
-				MYiConfig:addParam("scriptActive", "Combo", SCRIPT_PARAM_ONKEYDOWN, false, 32)
-				MYiConfig:addParam("drawcircles", "Draw Range", SCRIPT_PARAM_ONOFF, true)
-				MYiConfig:addParam("drawenemy", "Draw Enemy Circles", SCRIPT_PARAM_ONOFF, false)
-				MYiConfig:addParam("drawtext", "Draw Text", SCRIPT_PARAM_ONOFF, true)
-				MYiConfig:addParam("autoignite", "Auto Ignite", SCRIPT_PARAM_ONOFF, true)
-				MYiConfig:permaShow("scriptActive")
 				ts = TargetSelector(TARGET_LOW_HP,range+100,DAMAGE_MAGIC,false)
 				ts.name = "MasterYi"
 				MYiConfig:addTS(ts)
@@ -98,8 +739,7 @@ if GetGame().map.name == "Howling Abyss" then
 											if not WeHaveMana2 and QREADY and ts.target.health < qdmg then
 								if GetDistance(ts.target) <= (range-100) then CastSpell(_Q, ts.target) end
 						end                        
-							end
-				if MYiConfig.scriptActive and ts.target then
+				elseif ts.target then
 				--mana check managament:
 						local SpellDataQ = myHero:GetSpellData(_Q)
 						local totalCost = 100 + (60+10*SpellDataQ.level) --total cost of mana necessary to do a R+Q
@@ -126,21 +766,19 @@ if GetGame().map.name == "Howling Abyss" then
 						if EREADY and not WujuStyleActive then CastSpell(_E) end
 						myHero:Attack(ts.target)
 				end
-				if MYiConfig.autoignite then  
-						if IREADY then
-								local ignitedmg = 0    
-								for j = 1, heroManager.iCount, 1 do
-										local enemyhero = heroManager:getHero(j)
-										if ValidTarget(enemyhero,600) then
-												ignitedmg = 50 + 20 * myHero.level
-												if enemyhero.health <= ignitedmg then
-														CastSpell(ignite, enemyhero)
-												end
-										end
-								end
-						end
-				end
-		end
+					if IREADY then
+							local ignitedmg = 0    
+							for j = 1, heroManager.iCount, 1 do
+									local enemyhero = heroManager:getHero(j)
+									if ValidTarget(enemyhero,600) then
+											ignitedmg = 50 + 20 * myHero.level
+											if enemyhero.health <= ignitedmg then
+													CastSpell(ignite, enemyhero)
+											end
+									end
+							end
+					end
+			end
 		function YiDmgCalculation()
 				local enemy = heroManager:GetHero(calculationenemy)
 				if ValidTarget(enemy) then
@@ -201,39 +839,6 @@ if GetGame().map.name == "Howling Abyss" then
 						calculationenemy = calculationenemy-1
 				end
 		end
-		function OnDraw()
-				if MYiConfig.drawcircles and not myHero.dead then
-						DrawCircle(myHero.x, myHero.y, myHero.z, range, 0x19A712)
-						if ts.target ~= nil then
-							DrawCircle(ts.target.x, ts.target.y, ts.target.z, 50, 0x00FF00)
-						end
-				end
-				for i=1, heroManager.iCount do
-						local enemydraw = heroManager:GetHero(i)
-						if ValidTarget(enemydraw) then
-								if MYiConfig.drawenemy then
-										if killable[i] == 1 then
-												DrawCircle(enemydraw.x, enemydraw.y, enemydraw.z, 80, 0x0000FF)
-										elseif killable[i] == 2 then
-							  
-												DrawCircle(enemydraw.x, enemydraw.y, enemydraw.z, 80, 0xFF0000)
-										elseif killable[i] == 3 then
-												DrawCircle(enemydraw.x, enemydraw.y, enemydraw.z, 80, 0xFF0000)
-												DrawCircle(enemydraw.x, enemydraw.y, enemydraw.z, 110, 0xFF0000)
-										elseif killable[i] == 4 then
-												DrawCircle(enemydraw.x, enemydraw.y, enemydraw.z, 80, 0xFF0000)
-												DrawCircle(enemydraw.x, enemydraw.y, enemydraw.z, 110, 0xFF0000)
-												DrawCircle(enemydraw.x, enemydraw.y, enemydraw.z, 140, 0xFF0000)
-										end
-								end
-								if MYiConfig.drawtext and waittxt[i] == 1 and killable[i] ~= 0 then
-										PrintFloatText(enemydraw,0,floattext[killable[i]])
-								end
-						end
-						if waittxt[i] == 1 then waittxt[i] = 30
-						else waittxt[i] = waittxt[i]-1 end
-				end
-		end
 		   
 			function OnCreateObj(object)
 					if object.name == "WujustyleSC_buf.troy" then WujuStyleActive = true end
@@ -246,7 +851,7 @@ if GetGame().map.name == "Howling Abyss" then
 			end
 
 -----------------------------------------------------------------------------
-	elseif GetMyHero().charName == "Nami"
+	elseif GetMyHero().charName == "Nami" then
 	--[[
 	Author: Puze
 	Script: AesNami
@@ -730,7 +1335,7 @@ if GetGame().map.name == "Howling Abyss" then
 				end
 			end
 		end
-	end
+
     ------------------------------------------------------------------------------------------------------------------------------------------------------------
 	elseif GetMyHero().charName == "Soraka" then
 		--[[
@@ -1593,34 +2198,35 @@ if GetGame().map.name == "Howling Abyss" then
 		end
 		-- LOAD --
 		function OnLoad()
-				player = GetMyHero()
-				PrintChat("TARIC AUTOHEAL >> TARIC HEALER v0.01 loaded!")      
-				-- numerate spawn
-				for i=1, objManager.maxObjects, 1 do
-						local candidate = objManager:getObject(i)
-						if candidate ~= nil and candidate.type == "obj_SpawnPoint" then
-								if candidate.x < 3000 then
-										if player.team == TEAM_BLUE then allySpawn = candidate else enemySpawn = candidate end
-								else
-										if player.team == TEAM_BLUE then enemySpawn = candidate else allySpawn = candidate end
-								end
-						end
-				end
+			player = GetMyHero()
+			PrintChat("TARIC AUTOHEAL >> TARIC HEALER v0.01 loaded!")      
+			-- numerate spawn
+			for i=1, objManager.maxObjects, 1 do
+					local candidate = objManager:getObject(i)
+					if candidate ~= nil and candidate.type == "obj_SpawnPoint" then
+							if candidate.x < 3000 then
+									if player.team == TEAM_BLUE then allySpawn = candidate else enemySpawn = candidate end
+							else
+									if player.team == TEAM_BLUE then enemySpawn = candidate else allySpawn = candidate end
+							end
+					end
+			end
 		end
+--------------------------------------------------------------------------------------------------		
 	else
 		local ts = TargetSelector(TARGET_LOW_HP,1000,false)
+		function useSpell(ts, spell) -- Yes TRUS, its from your code ( your idea ). Thanks :p
+			if ts.target ~= nil and myHero:CanUseSpell(spell) == READY then
+				CastSpell(spell, ts.target)
+				CastSpell(spell, ts.target.x, ts.target.z)
+			end
+		end
 		function OnTick()
 			ts:update()
-			if ts.target ~= nil and ts.target.dead == false then
-				QReady = (myHero:CanUseSpell(_Q) == READY )
-				WReady = (myHero:CanUseSpell(_W) == READY )
-				EReady = (myHero:CanUseSpell(_E) == READY )
-				RReady = (myHero:CanUseSpell(_R) == READY )
-				if QReady then CastSpell(_Q, ts.target) end
-				if EReady then CastSpell(_E, ts.target) end
-				if WReady then CastSpell(_W) end
-				if RReady then CastSpell(_R) end
-			end
+			useSpell(ts, _Q)
+			useSpell(ts, _E)
+			useSpell(ts, _W)
+			useSpell(ts, _R)
 		end
 	end
 end

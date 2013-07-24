@@ -1,0 +1,29 @@
+return {
+	["Menu"] = {
+	},
+	["minimapTimers"] = {
+	},
+	["StunAlert"] = {
+	},
+	["AutoHeal"] = {
+	},
+	["AutoSummonerHeal"] = {
+	},
+	["AutoShieldItems"] = {
+	},
+	["AutoShield"] = {
+	},
+	["Master"] = {
+		["osTime"] = 1374682510,
+		["y"] = 192,
+		["x"] = 20,
+		["useTS"] = false,
+		["P1"] = 20,
+		["PS1"] = 0,
+		["I1"] = 4,
+		["iCount"] = 1,
+		["name1"] = "StunAlert",
+		["py"] = 614,
+		["px"] = 675,
+	},
+}

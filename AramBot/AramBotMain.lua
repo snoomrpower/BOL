@@ -16,6 +16,7 @@
 	Some of the default ability sequences are from mobafire, some from solomid (thx@crazy) :)
 ]]
 
+local CL = ChampionLane()
 
 local ts = TargetSelector(TARGET_LOW_HP,1000,false)
 local nextdelay = 0
@@ -123,48 +124,52 @@ function arrangePrioritys()
 end
 
 function nextAction()
-	if state() == "full" or state() =="med"
-		return "attackPlayer"
-	else 
-		return "follow"
 		--if CountEnemyHeroInRange(1000) > CountAllyHeroInRange(1000) then
 	-- equal fights
-	--[[if CountEnemyHeroInRange(800) == CountAllyHeroInRange(700)-1 and state() == "full" then 
-		return "attackPlayer" 
-	elseif CountEnemyHeroInRange(800) == CountAllyHeroInRange(700)-1 and state() == "med" then 
-		return "attackLowHp" 
-	elseif CountEnemyHeroInRange(800) == CountAllyHeroInRange(700) and state() == "full" then 
-		return "attackPlayer" 
-	-- more team
-	elseif CountEnemyHeroInRange(1000) == CountAllyHeroInRange(700) and state() =="full" or state() =="med" then 
-		return "attackPlayer" 
-	elseif CountEnemyHeroInRange(1000) < CountAllyHeroInRange(700) and state() =="med" then
-		return "attackPlayer"
-	elseif CountEnemyHeroInRange(1000)+2 < CountAllyHeroInRange(700) and state() =="low" then
-		return "attackPlayer"
-	-- 
-	elseif CountEnemyHeroInRange(1000) > CountAllyHeroInRange(700)+1 and state() =="med" then 
+	if CountEnemyHeroInRange(400) == 0 and  CountAllyHeroInRange(1000) == 1 and state() == "full" then 
 		return "follow" 
-	elseif CountEnemyHeroInRange(1000) > CountAllyHeroInRange(700) and state() =="med" then
+	elseif CountEnemyHeroInRange(1000) == CountAllyHeroInRange(1000) and state() == "full" then 
+		return "attackPlayer" 
+	elseif CountEnemyHeroInRange(1000) < CountAllyHeroInRange(1000) and state() == "full" then 
+		return "attackPlayer" 
+	elseif CountEnemyHeroInRange(1000)-1 == CountAllyHeroInRange(1000) and state() == "full" then 
+		return "attackPlayer" 
+	elseif CountEnemyHeroInRange(1000)-2 == CountAllyHeroInRange(1000) and state() == "full" then 
+		return "attackPlayer"
+		----------med
+	elseif CountEnemyHeroInRange(1000) == CountAllyHeroInRange(1000) and state() == "med" then 
+		return "attackPlayer" 
+	elseif CountEnemyHeroInRange(1000) < CountAllyHeroInRange(1000) and state() == "med" then 
+		return "attackPlayer" 
+	elseif CountEnemyHeroInRange(1000)-1 == CountAllyHeroInRange(1000) and state() == "med" then 
+		return "attackPlayer" 
+	elseif CountEnemyHeroInRange(1000)-2 == CountAllyHeroInRange(1000) and state() == "med" then 
+		return "follow"
+	----------------low
+	elseif CountEnemyHeroInRange(1000) == CountAllyHeroInRange(1000) and state() == "low" then 
+		return "follow" 
+	elseif CountEnemyHeroInRange(1000) < CountAllyHeroInRange(1000) and state() == "low" then 
+		return "attackPlayer" 
+	elseif CountEnemyHeroInRange(1000)-1 == CountAllyHeroInRange(1000) and state() == "low" then 
+		return "follow" 
+	elseif CountEnemyHeroInRange(1000)-2 == CountAllyHeroInRange(1000) and state() == "low" then 
 		return "follow"
 	-- def turret
-	elseif CountEnemyHeroInRange(1000)+2 < CountAllyHeroInRange(700) and state() =="low" then
+	elseif CountAllyHeroInRange == 1 then
 		currentTime= os.clock()
 		if currentTime - startingTime < 6000 then
 			return "moveToTurret2"
 		else
 			return "moveToTurret1"
 		end
-	else 
-		return "follow"
-	end]]--
+	end
 	
 end
 
 function state()
 	if player.health > (player.maxHealth*0.754) then
 		return "full"
-	elseif player.health > (player.maxHealth*0.445) then
+	elseif player.health > (player.maxHealth*0.475) then
 		return "med"
 	else
 		return "low"
@@ -198,6 +203,8 @@ local abilitySequence
 local player = GetMyHero()
 --[[ 		Functions	]]
 function OnTick()
+	--a = CountAllyHeroInRange(800)
+	--print(a)
 	--auto level spells.
     if player:GetSpellData(_Q).level + player:GetSpellData(_W).level + player:GetSpellData(_E).level + player:GetSpellData(_R).level < player.level then
         local spellSlot = { SPELL_1, SPELL_2, SPELL_3, SPELL_4, }
@@ -218,11 +225,11 @@ function OnTick()
 		player:MoveTo(myTurret1.x,myTurret1.y)
 		PrintChat("moving to the second turret")
 	elseif nextAction() == "follow" then
-		PrintChat("follow")
+		--PrintChat("follow")
 		if os.clock() > nextdelay then
 		--PrintChat("follow3333333333333333")
 			for i, folows in pairs(Allies) do
-					PrintChat("follow")
+					--PrintChat("follow")
 				if currentfolows == nil then
 					currentfolows = folows
 				else
@@ -230,7 +237,7 @@ function OnTick()
 						currentfolows = folows
 					end
 				end
-				if GetDistance(currentfolows) < 500 then
+				if GetDistance(currentfolows) < 400 then
 					player:HoldPosition()
 				else
 					player:MoveTo(currentfolows.x, currentfolows.z)
@@ -239,9 +246,10 @@ function OnTick()
 			nextdelay = os.clock() + 1
 		end
 	elseif nextAction() == "attackPlayer" then
-		if ts.target ~= nil then
-			myHero:Attack(ts.target)
-		end
+			--PrintChat("attack")
+			if ts.target ~= nil then
+				myHero:Attack(ts.target)
+			end
 	elseif nextAction() == "low" then
 			player:MoveTo(myTurret2.x,myTurret2.y)
 	elseif nextAction() == "attackLowHpOnly" then
@@ -350,6 +358,7 @@ function OnLoad()
     elseif champ == "Taric" then abilitySequence = { 3, 2, 1, 2, 2, 4, 1, 2, 2, 1, 4, 1, 1, 3, 3, 4, 3, 3, }
     elseif champ == "Teemo" then abilitySequence = { 1, 3, 2, 3, 1, 4, 3, 3, 3, 1, 4, 2, 2, 1, 2, 4, 2, 1, }
     elseif champ == "Tristana" then abilitySequence = { 3, 2, 2, 3, 2, 4, 2, 1, 2, 1, 4, 1, 1, 1, 3, 4, 3, 3, }
+	elseif champ == "Thresh" then abilitySequence = { 3, 2, 2, 3, 2, 4, 2, 1, 2, 1, 4, 1, 1, 1, 3, 4, 3, 3, }
     elseif champ == "Trundle" then abilitySequence = { 1, 2, 1, 3, 1, 4, 1, 2, 1, 3, 4, 2, 3, 2, 3, 4, 2, 3, }
     elseif champ == "Tryndamere" then abilitySequence = { 3, 1, 2, 1, 1, 4, 1, 2, 1, 2, 4, 2, 2, 3, 3, 4, 3, 3, }
     elseif champ == "TwistedFate" then abilitySequence = { 2, 1, 1, 3, 1, 4, 1, 2, 1, 2, 4, 2, 2, 3, 3, 4, 3, 3, }
