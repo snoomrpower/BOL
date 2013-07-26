@@ -1,0 +1,123 @@
+return {
+	["StunAlert"] = {
+	},
+	["khazixcombo"] = {
+		["_param"] = {
+			[1] = {
+				["key"] = 84,
+			},
+			[2] = {
+				["key"] = 71,
+			},
+		},
+		["scriptActive"] = false,
+		["drawprediction"] = false,
+		["useult"] = true,
+		["drawcircles"] = true,
+		["_tsInstances"] = {
+			[1] = {
+				["mode"] = 1,
+			},
+		},
+		["harass"] = false,
+		["drawtext"] = true,
+	},
+	["mkcquinn"] = {
+		["_param"] = {
+			[1] = {
+				["key"] = 84,
+			},
+		},
+		["_tsInstances"] = {
+			[1] = {
+				["mode"] = 1,
+			},
+		},
+		["drawcirclesSelf"] = false,
+		["scriptActive"] = false,
+	},
+	["minimapTimers"] = {
+	},
+	["sidasacfarming"] = {
+	},
+	["sidasacmain"] = {
+	},
+	["AutoShield"] = {
+	},
+	["sidasacpluginVayne"] = {
+		["_param"] = {
+		},
+		["condemnMixedMode"] = false,
+		["pushDistance"] = 450,
+		["_tsInstances"] = {
+		},
+		["condemnAutoCarry"] = false,
+	},
+	["Master"] = {
+		["px"] = 950,
+		["py"] = 720,
+		["x"] = 28,
+		["P1"] = 24,
+		["iCount"] = 1,
+		["I1"] = 4,
+		["osTime"] = 1374843252,
+		["useTS"] = true,
+		["y"] = 225,
+		["name1"] = "StunAlert",
+		["PS1"] = 2,
+	},
+	["AutoShieldItems"] = {
+	},
+	["sidasacstreaming"] = {
+	},
+	["FizzCombo"] = {
+	},
+	["sidasacpluginTristana"] = {
+	},
+	["sidasacperformance"] = {
+	},
+	["fiddlestickscombo"] = {
+	},
+	["sidasacitems"] = {
+	},
+	["sidasacdisplay"] = {
+	},
+	["sidasacsummoner"] = {
+	},
+	["Menu"] = {
+	},
+	["sidasacskills"] = {
+		["_param"] = {
+		},
+		["finalHourAutoCarry"] = true,
+		["tumbleMixedMode"] = false,
+		["_tsInstances"] = {
+		},
+		["tumbleAutoCarry"] = true,
+		["finalHourMixedMode"] = false,
+	},
+	["sidasacmasteries"] = {
+	},
+	["AutoSummonerBarrier"] = {
+	},
+	["VayneAssistant"] = {
+		["_param"] = {
+			[1] = {
+				["key"] = 78,
+			},
+		},
+		["pushDistance"] = 300,
+		["CondemnAssistant"] = true,
+		["disableCondemn3"] = false,
+		["disableCondemn5"] = false,
+		["disableCondemn1"] = false,
+		["switchKey"] = true,
+		["disableCondemn2"] = false,
+		["autoCondemn"] = true,
+		["eyeCandy"] = true,
+		["_tsInstances"] = {
+		},
+		["disableCondemn4"] = false,
+		["wallDetection"] = true,
+	},
+}

@@ -1,0 +1,7 @@
+return {
+	["tick"] = 1063027004,
+	["WINDOW_H"] = 900,
+	["WINDOW_W"] = 1440,
+	["osTime"] = 1374843252,
+	["params"] = "95.172.65.169 5124 8Xy7MIcQH7r6zSuWhGhFYg== 33427328",
+}
