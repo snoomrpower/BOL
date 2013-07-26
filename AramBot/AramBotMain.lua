@@ -146,9 +146,9 @@ function nextAction()
 	elseif CountEnemyHeroInRange(1000) < CountAllyHeroInRange(1000) and state() == "full" then 
 		return "attackPlayer" 
 	elseif CountEnemyHeroInRange(1000)-1 == CountAllyHeroInRange(1000) and state() == "full" then 
-		return "attackPlayer" 
+		return "follow" 
 	elseif CountEnemyHeroInRange(1000)-2 == CountAllyHeroInRange(1000) and state() == "full" then 
-		return "follow"
+		return "back"
 		----------high
 	elseif CountEnemyHeroInRange(1000) == CountAllyHeroInRange(1000) and state() == "high" then 
 		return "attackPlayer" 
@@ -189,7 +189,9 @@ function nextAction()
 end
 
 function back()
-	player:MoveTo(player.x + moveBackX,player.y + moveBackY)
+local x=player.x+moveBackX
+local y=player.y+moveBackY
+	player:MoveTo(x,y)
 end
 
 function state()
@@ -235,7 +237,7 @@ function teamLogic()
 			enemyInhibitor=blueInhibitor
 			--PrintChat("Red team logic")
 			moveBackX=500
-			MoveBackY=500
+			moveBackY=500
 		else
 			myTurret1= blueTurret1
 			myTurret2=blueTurret2
@@ -245,7 +247,7 @@ function teamLogic()
 			enemyInhibitor=redInhibitor
 			--PrintChat("Blue team logic")
 			moveBackX=-500
-			MoveBackY=-500
+			moveBackY=-500
 		end
 end
 
@@ -285,7 +287,6 @@ function OnTick()
 			end
 	elseif nextAction() == "back" then
 			back()
-		end
 	end
 end
 
