@@ -10,13 +10,13 @@
 
 	Levels the abilities of every single Champion
 	Written by grey
-
+	added some champs.
+	
 	Dont forget to check the abilitySequence of your champion
 	Thanks to Zynox and PedobearIGER who gave me some ideas and tipps.
 	Some of the default ability sequences are from mobafire, some from solomid (thx@crazy) :)
 ]]
 
-local CL = ChampionLane()
 
 local ts = TargetSelector(TARGET_LOW_HP,1000,false)
 local nextdelay = 0
@@ -38,7 +38,7 @@ local redTurret2={x=7777,y=7777}
 local redTurret1={x=8888,y=8888}
 local redInhibitor={x=9588,y=9588}
 
-local myTurret1, myTurret2, myInhibitor, enemyTurret1, enemyTurret2, enemyInhibitor
+local myTurret1, myTurret2, myInhibitor, enemyTurret1, enemyTurret2, enemyInhibitor, moveBackX, moveBackY
 
 local priorityTable = {
  
@@ -58,7 +58,7 @@ local priorityTable = {
  
     AD_Carry = {
         "Ashe", "Caitlyn", "Corki", "Draven", "Ezreal", "Graves", "Jayce", "KogMaw", "MissFortune", "Pantheon", "Quinn", "Shaco", "Sivir",
-        "Talon", "Tristana", "Twitch", "Urgot", "Varus", "Vayne", "Zed",
+        "Talon", "Tristana", "Twitch", "Urgot", "Varus", "Vayne", "Zed", "Lucian"
  
     },
  
@@ -138,8 +138,7 @@ function arrangePrioritys()
 end
 
 function nextAction()
-		--if CountEnemyHeroInRange(1000) > CountAllyHeroInRange(1000) then
-	-- equal fights
+	--------------------------full
 	if CountEnemyHeroInRange(400) == 0 and  CountAllyHeroInRange(1000) == 1 and state() == "full" then 
 		return "follow" 
 	elseif CountEnemyHeroInRange(1000) == CountAllyHeroInRange(1000) and state() == "full" then 
@@ -149,25 +148,34 @@ function nextAction()
 	elseif CountEnemyHeroInRange(1000)-1 == CountAllyHeroInRange(1000) and state() == "full" then 
 		return "attackPlayer" 
 	elseif CountEnemyHeroInRange(1000)-2 == CountAllyHeroInRange(1000) and state() == "full" then 
-		return "attackPlayer"
+		return "follow"
+		----------high
+	elseif CountEnemyHeroInRange(1000) == CountAllyHeroInRange(1000) and state() == "high" then 
+		return "attackPlayer" 
+	elseif CountEnemyHeroInRange(1000) < CountAllyHeroInRange(1000) and state() == "high" then 
+		return "attackPlayer" 
+	elseif CountEnemyHeroInRange(1000)-1 == CountAllyHeroInRange(1000) and state() == "high" then 
+		return "follow" 
+	elseif CountEnemyHeroInRange(1000)-2 == CountAllyHeroInRange(1000) and state() == "high" then 
+		return "back"
 		----------med
 	elseif CountEnemyHeroInRange(1000) == CountAllyHeroInRange(1000) and state() == "med" then 
 		return "attackPlayer" 
 	elseif CountEnemyHeroInRange(1000) < CountAllyHeroInRange(1000) and state() == "med" then 
 		return "attackPlayer" 
 	elseif CountEnemyHeroInRange(1000)-1 == CountAllyHeroInRange(1000) and state() == "med" then 
-		return "attackPlayer" 
+		return "follow" 
 	elseif CountEnemyHeroInRange(1000)-2 == CountAllyHeroInRange(1000) and state() == "med" then 
-		return "follow"
+		return "back"
 	----------------low
 	elseif CountEnemyHeroInRange(1000) == CountAllyHeroInRange(1000) and state() == "low" then 
 		return "follow" 
 	elseif CountEnemyHeroInRange(1000) < CountAllyHeroInRange(1000) and state() == "low" then 
 		return "attackPlayer" 
 	elseif CountEnemyHeroInRange(1000)-1 == CountAllyHeroInRange(1000) and state() == "low" then 
-		return "follow" 
+		return "back" 
 	elseif CountEnemyHeroInRange(1000)-2 == CountAllyHeroInRange(1000) and state() == "low" then 
-		return "follow"
+		return "back"
 	-- def turret
 	elseif CountAllyHeroInRange == 1 then
 		currentTime= os.clock()
@@ -180,73 +188,25 @@ function nextAction()
 	
 end
 
+function back()
+	player:MoveTo(player.x + moveBackX,player.y + moveBackY)
+end
+
 function state()
-	if player.health > (player.maxHealth*0.754) then
+	if player.health > (player.maxHealth*0.90) then
 		return "full"
-	elseif player.health > (player.maxHealth*0.475) then
+	elseif player.health > (player.maxHealth*0.70) then
+		return "high"
+	elseif player.health > (player.maxHealth*0.45) then
 		return "med"
 	else
 		return "low"
 	end
 end
 
-function teamLogic()
-		if player == TEAM_RED then
-			myTurret1= redTurret1
-			myTurret2=redTurret2
-			myInhibitor=redInhibitor
-			enemyTurret1= blueTurret1
-			enemyTurret2= blueTurret2
-			enemyInhibitor=blueInhibitor
-			PrintChat("Red team logic")
-			move = "down"
-		else
-			myTurret1= blueTurret1
-			myTurret2=blueTurret2
-			myInhibitor=blueInhibitor
-			enemyTurret1= redTurret1
-			enemyTurret2= redTurret2
-			enemyInhibitor=redInhibitor
-			PrintChat("Blue team logic")
-			move = "up"
-		end
-end
-
---[[ 		Globals		]]
-local abilitySequence
-local player = GetMyHero()
---[[ 		Functions	]]
-function OnTick()
-	--a = CountAllyHeroInRange(800)
-	--print(a)
-	--auto level spells.
-	if isUnderTurret() == true then
-		PrintChat("true")
-	end
-    if player:GetSpellData(_Q).level + player:GetSpellData(_W).level + player:GetSpellData(_E).level + player:GetSpellData(_R).level < player.level then
-        local spellSlot = { SPELL_1, SPELL_2, SPELL_3, SPELL_4, }
-        local level = { 0, 0, 0, 0 }
-        for i = 1, player.level, 1 do
-            level[abilitySequence[i]] = level[abilitySequence[i]] + 1
-        end
-        for i, v in ipairs({ player:GetSpellData(_Q).level, player:GetSpellData(_W).level, player:GetSpellData(_E).level, player:GetSpellData(_R).level }) do
-            if v < level[i] then LevelSpell(spellSlot[i]) end
-        end
-    end
-	-- action
-	--player:MoveTo(9588,9588)
-	if nextAction() == "moveToTurret2" then
-		player:MoveTo(myTurret2.x,myTurret2.y)
-		PrintChat("moving to the first turret")
-	elseif nextAction() == "moveToTurret1" then
-		player:MoveTo(myTurret1.x,myTurret1.y)
-		PrintChat("moving to the second turret")
-	elseif nextAction() == "follow" then
-		--PrintChat("follow")
+function follow()
 		if os.clock() > nextdelay then
-		--PrintChat("follow3333333333333333")
 			for i, folows in pairs(Allies) do
-					--PrintChat("follow")
 				if currentfolows == nil then
 					currentfolows = folows
 				else
@@ -262,16 +222,69 @@ function OnTick()
 			end
 			nextdelay = os.clock() + 1
 		end
+end
+
+
+function teamLogic()
+		if player == TEAM_RED then
+			myTurret1= redTurret1
+			myTurret2=redTurret2
+			myInhibitor=redInhibitor
+			enemyTurret1= blueTurret1
+			enemyTurret2= blueTurret2
+			enemyInhibitor=blueInhibitor
+			--PrintChat("Red team logic")
+			moveBackX=500
+			MoveBackY=500
+		else
+			myTurret1= blueTurret1
+			myTurret2=blueTurret2
+			myInhibitor=blueInhibitor
+			enemyTurret1= redTurret1
+			enemyTurret2= redTurret2
+			enemyInhibitor=redInhibitor
+			--PrintChat("Blue team logic")
+			moveBackX=-500
+			MoveBackY=-500
+		end
+end
+
+--[[ 		Globals		]]
+local abilitySequence
+local player = GetMyHero()
+--[[ 		Functions	]]
+function OnTick()
+	--auto level spells.
+	if isUnderTurret() == true then
+		PrintChat("true")
+	end
+    if player:GetSpellData(_Q).level + player:GetSpellData(_W).level + player:GetSpellData(_E).level + player:GetSpellData(_R).level < player.level then
+        local spellSlot = { SPELL_1, SPELL_2, SPELL_3, SPELL_4, }
+        local level = { 0, 0, 0, 0 }
+        for i = 1, player.level, 1 do
+            level[abilitySequence[i]] = level[abilitySequence[i]] + 1
+        end
+        for i, v in ipairs({ player:GetSpellData(_Q).level, player:GetSpellData(_W).level, player:GetSpellData(_E).level, player:GetSpellData(_R).level }) do
+            if v < level[i] then LevelSpell(spellSlot[i]) end
+        end
+    end
+	-- action
+	if nextAction() == "moveToTurret2" then
+		player:MoveTo(myTurret2.x,myTurret2.y)
+		PrintChat("moving to the first turret")
+	elseif nextAction() == "moveToTurret1" then
+		player:MoveTo(myTurret1.x,myTurret1.y)
+		PrintChat("moving to the second turret")
+	elseif nextAction() == "follow" then
+		--PrintChat("follow")
+		follow()
 	elseif nextAction() == "attackPlayer" then
 			--PrintChat("attack")
 			if ts.target ~= nil then
 				myHero:Attack(ts.target)
 			end
-	elseif nextAction() == "low" then
-			player:MoveTo(myTurret2.x,myTurret2.y)
-	elseif nextAction() == "attackLowHpOnly" then
-		if ts.health < (ts.target.MaxHealth*0.0365) then
-			myHero:Attack(ts.target)
+	elseif nextAction() == "back" then
+			back()
 		end
 	end
 end
@@ -294,7 +307,8 @@ function OnLoad()
      To turn off the script for a particular champion,
      you have to comment out this line with two dashes.
      ]]
-    if champ == "Ahri" then abilitySequence = { 1, 3, 1, 2, 1, 4, 1, 2, 1, 2, 4, 2, 2, 3, 3, 4, 2, 2, }
+    if champ == "Aatrox" then abilitySequence = { 1, 2, 3, 2, 1, 4, 1, 2, 1, 2, 4, 2, 2, 3, 3, 4, 2, 2, }
+    elseif champ == "Ahri" then abilitySequence = { 1, 3, 1, 2, 1, 4, 1, 2, 1, 2, 4, 2, 2, 3, 3, 4, 2, 2, }
     elseif champ == "Akali" then abilitySequence = { 1, 2, 1, 3, 1, 4, 1, 3, 1, 3, 4, 3, 3, 2, 2, 4, 2, 2, }
     elseif champ == "Alistar" then abilitySequence = { 1, 3, 2, 1, 3, 4, 1, 3, 1, 3, 4, 1, 3, 2, 2, 4, 2, 2, }
     elseif champ == "Amumu" then abilitySequence = { 2, 3, 3, 1, 3, 4, 3, 1, 3, 1, 4, 1, 1, 2, 2, 4, 2, 2, }
@@ -333,6 +347,7 @@ function OnLoad()
     elseif champ == "Kennen" then abilitySequence = { 1, 3, 2, 2, 2, 4, 2, 1, 2, 1, 4, 1, 1, 3, 3, 4, 3, 3, }
     elseif champ == "KogMaw" then abilitySequence = { 2, 3, 2, 1, 2, 4, 2, 1, 2, 1, 4, 1, 1, 3, 3, 4, 3, 3, }
     elseif champ == "Leblanc" then abilitySequence = { 1, 2, 3, 1, 1, 4, 1, 2, 1, 2, 4, 2, 3, 2, 3, 4, 3, 3, }
+    elseif champ == "Lucian" then abilitySequence = { 1, 2, 3, 1, 1, 4, 1, 2, 1, 2, 4, 2, 3, 2, 3, 4, 3, 3, }
     elseif champ == "LeeSin" then abilitySequence = { 3, 1, 2, 1, 1, 4, 1, 2, 1, 2, 4, 2, 2, 3, 3, 4, 3, 3, }
     elseif champ == "Leona" then abilitySequence = { 1, 3, 2, 2, 2, 4, 2, 3, 2, 3, 4, 3, 3, 1, 1, 4, 1, 1, }
     elseif champ == "Lulu" then abilitySequence = { 3, 2, 1, 3, 3, 4, 3, 2, 3, 2, 4, 2, 2, 1, 1, 4, 1, 1, }
