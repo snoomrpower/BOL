@@ -1,105 +1,42 @@
 return {
-	["ally"] = {
-		["bot"] = {
-		},
-		["unknown"] = {
-		},
-		["mid"] = {
-		},
-		["top"] = {
-		},
-		["jungle"] = {
-		},
-		["champions"] = {
-			[1] = {
-				["bot"] = 0,
-				["mid"] = 0,
-				["isJungler"] = false,
-				["jungle"] = 0,
-				["top"] = 0,
-			},
-			[2] = {
-				["bot"] = 0,
-				["mid"] = 0,
-				["isJungler"] = false,
-				["jungle"] = 0,
-				["top"] = 0,
-			},
-			[4] = {
-				["bot"] = 0,
-				["mid"] = 0,
-				["isJungler"] = false,
-				["jungle"] = 0,
-				["top"] = 0,
-			},
-			[5] = {
-				["bot"] = 0,
-				["mid"] = 0,
-				["isJungler"] = false,
-				["jungle"] = 0,
-				["top"] = 0,
-			},
-			[3] = {
-				["bot"] = 0,
-				["mid"] = 0,
-				["isJungler"] = false,
-				["jungle"] = 0,
-				["top"] = 0,
-			},
-		},
-	},
 	["nextUpdate"] = 0,
-	["enemy"] = {
-		["bot"] = {
-		},
-		["unknown"] = {
-		},
+	["myLane"] = "unknown",
+	["params"] = "31.186.226.115 5133 pjcr/9zG9JGIx3CD2c9mTw== 33427328",
+	["mapIndex"] = 12,
+	["ally"] = {
 		["mid"] = {
 		},
 		["top"] = {
 		},
-		["jungle"] = {
-		},
 		["champions"] = {
 			[1] = {
-				["bot"] = 0,
 				["mid"] = 0,
+				["top"] = 0,
 				["isJungler"] = false,
 				["jungle"] = 0,
-				["top"] = 0,
-			},
-			[2] = {
 				["bot"] = 0,
-				["mid"] = 0,
-				["isJungler"] = false,
-				["jungle"] = 0,
-				["top"] = 0,
-			},
-			[4] = {
-				["bot"] = 0,
-				["mid"] = 0,
-				["isJungler"] = false,
-				["jungle"] = 0,
-				["top"] = 0,
-			},
-			[5] = {
-				["bot"] = 0,
-				["mid"] = 0,
-				["isJungler"] = false,
-				["jungle"] = 0,
-				["top"] = 0,
-			},
-			[3] = {
-				["bot"] = 0,
-				["mid"] = 0,
-				["isJungler"] = false,
-				["jungle"] = 0,
-				["top"] = 0,
 			},
 		},
+		["jungle"] = {
+		},
+		["bot"] = {
+		},
+		["unknown"] = {
+		},
 	},
-	["mapIndex"] = 12,
-	["myLane"] = "unknown",
-	["params"] = "95.172.70.123 5120 3Fa6PC3xdxX9xeBkFsUQVQ== 33427328",
+	["enemy"] = {
+		["mid"] = {
+		},
+		["top"] = {
+		},
+		["champions"] = {
+		},
+		["jungle"] = {
+		},
+		["bot"] = {
+		},
+		["unknown"] = {
+		},
+	},
 	["tickUpdate"] = 0.25,
 }

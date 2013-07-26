@@ -1,29 +1,29 @@
 return {
 	["AutoSummonerHeal"] = {
 	},
-	["AutoHeal"] = {
-	},
 	["minimapTimers"] = {
-	},
-	["Menu"] = {
 	},
 	["AutoShield"] = {
 	},
-	["AutoShieldItems"] = {
-	},
 	["Master"] = {
-		["osTime"] = 1374683927,
-		["P1"] = 28,
-		["px"] = 675,
 		["useTS"] = false,
+		["name1"] = "StunAlert",
+		["px"] = 675,
+		["P1"] = 20,
+		["I1"] = 4,
+		["x"] = 20,
 		["y"] = 192,
 		["PS1"] = 0,
-		["py"] = 614,
-		["x"] = 20,
 		["iCount"] = 1,
-		["name1"] = "StunAlert",
-		["I1"] = 4,
+		["py"] = 614,
+		["osTime"] = 1374744600,
+	},
+	["Menu"] = {
 	},
 	["StunAlert"] = {
+	},
+	["AutoHeal"] = {
+	},
+	["AutoShieldItems"] = {
 	},
 }

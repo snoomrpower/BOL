@@ -849,7 +849,6 @@ if GetGame().map.name == "Howling Abyss" then
 		function OnLoad()
 				ts = TargetSelector(TARGET_LOW_HP,range+100,DAMAGE_MAGIC,false)
 				ts.name = "MasterYi"
-				MYiConfig:addTS(ts)
 				if myHero:GetSpellData(SUMMONER_1).name:find("SummonerDot") then ignite = SUMMONER_1
 				elseif myHero:GetSpellData(SUMMONER_2).name:find("SummonerDot") then ignite = SUMMONER_2 end
 				for i=1, heroManager.iCount do waittxt[i] = i*3 end

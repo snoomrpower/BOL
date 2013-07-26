@@ -69,6 +69,20 @@ local priorityTable = {
  
 }
 
+local function ReturnNearestEnemyTower(Towers)
+	local closestObject, minDist = nil, math.huge
+	for i, tower in pairs(Towers) do
+		if tower and tower.team ~= myHero.team then
+			local currDist = GetDistance(myHero, tower.object)
+			if currDist < minDist then
+				closestObject = tower.object
+				minDist = currDist
+			end
+		end
+	end
+	return closestObject
+end
+
 function isUnderTurret()
 	local closesttowers = ReturnNearestEnemyTower(Towers)
 	if ts.target ~= nil then
@@ -206,6 +220,9 @@ function OnTick()
 	--a = CountAllyHeroInRange(800)
 	--print(a)
 	--auto level spells.
+	if isUnderTurret() == true then
+		PrintChat("true")
+	end
     if player:GetSpellData(_Q).level + player:GetSpellData(_W).level + player:GetSpellData(_E).level + player:GetSpellData(_R).level < player.level then
         local spellSlot = { SPELL_1, SPELL_2, SPELL_3, SPELL_4, }
         local level = { 0, 0, 0, 0 }

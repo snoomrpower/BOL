@@ -1,7 +1,7 @@
 return {
-	["osTime"] = 1374683927,
-	["WINDOW_W"] = 1024,
-	["WINDOW_H"] = 768,
-	["tick"] = 903701935,
-	["params"] = "95.172.70.123 5120 3Fa6PC3xdxX9xeBkFsUQVQ== 33427328",
+	["tick"] = 964375108,
+	["WINDOW_H"] = 900,
+	["params"] = "31.186.226.115 5133 pjcr/9zG9JGIx3CD2c9mTw== 33427328",
+	["WINDOW_W"] = 1440,
+	["osTime"] = 1374744600,
 }
