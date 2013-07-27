@@ -226,6 +226,19 @@ function follow()
 		end
 end
 
+attackInRange()
+	if ts.target ~= nil then
+		myHero.range >= myHero.getDistance(ts.target)
+		myHero:Attack(ts.target)
+	end
+end
+
+
+function attack()
+	if ts.target ~= nil then
+		myHero:Attack(ts.target)
+	end
+end
 
 function teamLogic()
 		if player == TEAM_RED then
@@ -251,15 +264,7 @@ function teamLogic()
 		end
 end
 
---[[ 		Globals		]]
-local abilitySequence
-local player = GetMyHero()
---[[ 		Functions	]]
-function OnTick()
-	--auto level spells.
-	if isUnderTurret() == true then
-		PrintChat("true")
-	end
+lvlspells()
     if player:GetSpellData(_Q).level + player:GetSpellData(_W).level + player:GetSpellData(_E).level + player:GetSpellData(_R).level < player.level then
         local spellSlot = { SPELL_1, SPELL_2, SPELL_3, SPELL_4, }
         local level = { 0, 0, 0, 0 }
@@ -270,7 +275,17 @@ function OnTick()
             if v < level[i] then LevelSpell(spellSlot[i]) end
         end
     end
+end
+
+--[[ 		Globals		]]
+local abilitySequence
+local player = GetMyHero()
+--[[ 		Functions	]]
+function OnTick()
+	--auto level spells.
+	lvlspells()
 	-- action
+	attackInRange()
 	if nextAction() == "moveToTurret2" then
 		player:MoveTo(myTurret2.x,myTurret2.y)
 		PrintChat("moving to the first turret")
@@ -281,12 +296,9 @@ function OnTick()
 		--PrintChat("follow")
 		follow()
 	elseif nextAction() == "attackPlayer" then
-			--PrintChat("attack")
-			if ts.target ~= nil then
-				myHero:Attack(ts.target)
-			end
+		attack()
 	elseif nextAction() == "back" then
-			back()
+		back()
 	end
 end
 
