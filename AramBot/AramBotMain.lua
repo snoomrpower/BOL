@@ -26,10 +26,7 @@ local follow = nil
 local startTime 
 local currentTime
 
-local action
-local move
-
- local info
+local info
 
 local blueInhibitor={x=3333,y=3333}
 local blueTurret1={x=3900,y=3900}
@@ -235,8 +232,26 @@ end
 
 
 function attack()
+	autoBurstDown()
 	if ts.target ~= nil then
 		myHero:Attack(ts.target)
+	end
+end
+
+local autoBurstDown()
+	local combo
+	local qDmg = getDmg("Q",ts.target,myHero)
+	local wDmg = getDmg("W",ts.target,myHero)
+	local eDmg = getDmg("E",ts.target,myHero)
+	local rDmg = getDmg("R",ts.target,myHero)
+	local aaDmg = getDmg("AD",ts.target,myHero)
+	combo = qDmg + wDmg + eDmg + rDmg + aaDmg
+	if combo >= ts.target.health and myHero.range >= myHero.getDistance(ts.target) then
+		useSpell(ts, _Q)
+		useSpell(ts, _E)
+		useSpell(ts, _W)
+		useSpell(ts, _R)
+		attackInRange()
 	end
 end
 

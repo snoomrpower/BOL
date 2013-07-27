@@ -2402,7 +2402,6 @@ if GetGame().map.name == "Howling Abyss" then
 			useSpell(ts, _Q)
 			useSpell(ts, _E)
 			useSpell(ts, _W)
-			useSpell(ts, _R)
 		end
 	end
 end
