@@ -82,7 +82,7 @@ function attackedSuccessfully()
 end
  
 function heroCanMove()
-	return (GetTickCount() + GetLatency()/2 > lastAttack + previousWindUp + 20)
+	return (GetTickCount() + GetLatency()/2 > lastAttack + previousWindUp + 20 + 30)
 end
  
 function setMovement()
