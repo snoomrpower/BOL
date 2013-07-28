@@ -223,22 +223,25 @@ function follow()
 		end
 end
 
-attackInRange()
+function attackInRange(ts)
+PrintChat("1")
 	if ts.target ~= nil then
-		myHero.range >= myHero.getDistance(ts.target)
-		myHero:Attack(ts.target)
+		if myHero.range+200 > myHero.getDistance(ts.target) then
+		PrintChat("aaaaaaaaaaaa")
+			myHero:Attack(ts.target)
+		end
 	end
 end
 
 
-function attack()
-	autoBurstDown()
+function attack(ts)
+	--autoBurstDown(ts)
 	if ts.target ~= nil then
 		myHero:Attack(ts.target)
 	end
 end
 
-local autoBurstDown()
+function autoBurstDown(ts)
 	local combo
 	local qDmg = getDmg("Q",ts.target,myHero)
 	local wDmg = getDmg("W",ts.target,myHero)
@@ -246,7 +249,7 @@ local autoBurstDown()
 	local rDmg = getDmg("R",ts.target,myHero)
 	local aaDmg = getDmg("AD",ts.target,myHero)
 	combo = qDmg + wDmg + eDmg + rDmg + aaDmg
-	if combo >= ts.target.health and myHero.range >= myHero.getDistance(ts.target) then
+	if combo > ts.target.health and myHero.range > myHero.getDistance(ts.target) then
 		useSpell(ts, _Q)
 		useSpell(ts, _E)
 		useSpell(ts, _W)
@@ -279,7 +282,22 @@ function teamLogic()
 		end
 end
 
-lvlspells()
+function getTrueRange()
+    return myHero.range + GetDistance(myHero.minBBox)
+end
+
+ 
+function attackEnemy(enemy)
+	myHero:Attack(enemy)
+end
+
+--[[ 		Globals		]]
+local abilitySequence
+local player = GetMyHero()
+--[[ 		Functions	]]
+function OnTick()
+PrintChat(player.GetDistance(player))
+	--auto level spells.
     if player:GetSpellData(_Q).level + player:GetSpellData(_W).level + player:GetSpellData(_E).level + player:GetSpellData(_R).level < player.level then
         local spellSlot = { SPELL_1, SPELL_2, SPELL_3, SPELL_4, }
         local level = { 0, 0, 0, 0 }
@@ -290,17 +308,8 @@ lvlspells()
             if v < level[i] then LevelSpell(spellSlot[i]) end
         end
     end
-end
-
---[[ 		Globals		]]
-local abilitySequence
-local player = GetMyHero()
---[[ 		Functions	]]
-function OnTick()
-	--auto level spells.
-	lvlspells()
 	-- action
-	attackInRange()
+	attackInRange(ts)
 	if nextAction() == "moveToTurret2" then
 		player:MoveTo(myTurret2.x,myTurret2.y)
 		PrintChat("moving to the first turret")
@@ -311,7 +320,7 @@ function OnTick()
 		--PrintChat("follow")
 		follow()
 	elseif nextAction() == "attackPlayer" then
-		attack()
+		attack(ts)
 	elseif nextAction() == "back" then
 		back()
 	end

@@ -447,7 +447,6 @@ if GetGame().map.name == "Howling Abyss" then
 		function OnLoad()
 			ts = TargetSelector(TARGET_LOW_HP,range,DAMAGE_MAGIC)
 			ts.name = "Alistar"
-			ACConfig:addTS(ts)
 		end
 
 		function OnTick()
