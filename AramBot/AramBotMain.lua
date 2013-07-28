@@ -223,7 +223,7 @@ function follow()
 		end
 end
 
-function attackInRange(ts)
+--[[function attackInRange(ts)
 PrintChat("1")
 	if ts.target ~= nil then
 		if myHero.range+200 > myHero.getDistance(ts.target) then
@@ -231,10 +231,10 @@ PrintChat("1")
 			myHero:Attack(ts.target)
 		end
 	end
-end
+end]]--
 
 
-function attack(ts)
+--[[function attack(ts)
 	--autoBurstDown(ts)
 	if ts.target ~= nil then
 		myHero:Attack(ts.target)
@@ -256,7 +256,7 @@ function autoBurstDown(ts)
 		useSpell(ts, _R)
 		attackInRange()
 	end
-end
+end]]--
 
 function teamLogic()
 		if player == TEAM_RED then
@@ -282,14 +282,14 @@ function teamLogic()
 		end
 end
 
-function getTrueRange()
+--[[function getTrueRange()
     return myHero.range + GetDistance(myHero.minBBox)
-end
+end]]--
 
  
-function attackEnemy(enemy)
+--[[function attackEnemy(enemy)
 	myHero:Attack(enemy)
-end
+end]]--
 
 --[[ 		Globals		]]
 local abilitySequence
@@ -309,7 +309,7 @@ PrintChat(player.GetDistance(player))
         end
     end
 	-- action
-	attackInRange(ts)
+	--attackInRange(ts)
 	if nextAction() == "moveToTurret2" then
 		player:MoveTo(myTurret2.x,myTurret2.y)
 		PrintChat("moving to the first turret")
@@ -320,7 +320,9 @@ PrintChat(player.GetDistance(player))
 		--PrintChat("follow")
 		follow()
 	elseif nextAction() == "attackPlayer" then
-		attack(ts)
+	if ts.target ~= nil then
+		myHero:Attack(ts.target)
+	end
 	elseif nextAction() == "back" then
 		back()
 	end
